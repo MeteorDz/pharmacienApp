@@ -12,7 +12,8 @@ class ResultScreen extends StatelessWidget {
         ),
         body: Container(
           padding: const EdgeInsets.all(30.0),
-          child: Text(text),
+          child: Text(text.split('\n')[0] ),
         ),
       );
 }
+

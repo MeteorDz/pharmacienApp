@@ -48,6 +48,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _stopCamera();
+    _cameraController?.dispose();
     textRecognizer.close();
     super.dispose();
   }
