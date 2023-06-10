@@ -1,19 +1,22 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:sqlitedatabase/dbhelper.dart';
 import 'package:sqlitedatabase/model.dart';
 import 'package:sqlitedatabase/remain.dart';
 
+import 'dbhelper.dart';
 import 'medWidget.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final DbHelper db = DbHelper();
+  db.initdb();
+  runApp(  MyApp(db: db,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  const MyApp({super.key, required this.db});
+final DbHelper db;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,14 +24,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'فرمسيــــان'),
+      home:   MyHomePage(db: db, title: 'فرمسيــــان'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
+  const MyHomePage({super.key, required this.title, required this.db});
+ final DbHelper db;
   final String title;
 
   @override
@@ -41,24 +44,22 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String>? columns;
   @override
   void initState() {
-    DbHelper.initdb();
-    update();
+    DbHelper().initdb().then((value) => update());
+
     super.initState();
   }
 
   update() async {
-    // await DbHelper.initdb();
-    // <List<Map<String, Object?>>>
-    dataSet = (await DbHelper.query());
+    dataSet = (await widget.db.query());
     dataSet = dataSet!.where((element) => element['id'] as int < 50).toList();
-    columns = (await DbHelper.getColumns()).toList();
+    columns = (await widget.db.getColumns()).toList();
     _counter++;
   }
 
   filter(String column, String word) async {
-    // await DbHelper.initdb();
+    // await db.initdb();
     // <List<Map<String, Object?>>>
-    dataSet = (await DbHelper.filter(column, word));
+    dataSet = (await widget.db.filter(column, word));
     log(dataSet!.length.toString());
     setState(() {
       dataSet = dataSet!
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       log(dataSet!.length.toString());
     });
 
-    columns = (await DbHelper.getColumns()).toList();
+    columns = (await widget.db.getColumns()).toList();
     _counter++;
   }
 
