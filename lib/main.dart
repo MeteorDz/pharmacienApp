@@ -11,12 +11,14 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final DbHelper db = DbHelper();
   db.initdb();
-  runApp(  MyApp(db: db,));
+  runApp(MyApp(
+    db: db,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.db});
-final DbHelper db;
+  final DbHelper db;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,14 +26,14 @@ final DbHelper db;
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home:   MyHomePage(db: db, title: 'فرمسيــــان'),
+      home: MyHomePage(db: db, title: 'فرمسيــــان'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title, required this.db});
- final DbHelper db;
+  final DbHelper db;
   final String title;
 
   @override
@@ -74,7 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _incrementCounter() async {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const App()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => App(
+                  db: widget.db,
+                )));
   }
 
   @override

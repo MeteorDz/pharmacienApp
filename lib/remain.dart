@@ -6,9 +6,11 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqlitedatabase/result_screen.dart';
 
-class App extends StatelessWidget {
-  const App({super.key});
+import 'dbhelper.dart';
 
+class App extends StatelessWidget {
+  App({super.key, required this.db});
+  final DbHelper db;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,14 +18,14 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MainScreen(),
+      home:   MainScreen(db: db),
     );
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
+class MainScreen extends StatefulWidget { 
+ const MainScreen({super.key, required this.db});
+final DbHelper db;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -103,7 +105,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           padding: const EdgeInsets.only(bottom: 30.0),
                           child: Center(
                             child: ElevatedButton(
-                              onPressed: _scanImage,
+                              onPressed:  () => _scanImage(widget.db),
                               child: const Text('Scan Medication'),
                             ),
                           ),
@@ -179,7 +181,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     setState(() {});
   }
 
-  Future<void> _scanImage() async {
+  Future<void> _scanImage(DbHelper db) async {
     if (_cameraController == null) return;
 
     final navigator = Navigator.of(context);
@@ -195,7 +197,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       await navigator.push(
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              ResultScreen(text: recognizedText.text),
+              ResultScreen(db: db, text: recognizedText.text),
         ),
       );
     } catch (e) {
