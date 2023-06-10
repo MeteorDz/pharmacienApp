@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'model.dart';
@@ -17,12 +19,14 @@ class MedicationPage extends StatefulWidget {
 class _MedicationPageState extends State<MedicationPage> {
   @override
   Widget build(BuildContext context) {
-    return Material (
+    return Material(
       child: Container(
         padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
         color: Colors.white,
         child: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            getImage(),
             Text(
               '  ${widget.medicationModel.name}',
               style: const TextStyle(color: Colors.black, fontSize: 24),
@@ -59,5 +63,13 @@ class _MedicationPageState extends State<MedicationPage> {
         ),
       ),
     );
+  }
+
+  getImage() {
+    File? imageFile;
+
+    imageFile = File(widget.medicationModel.picture);
+    return Image.file(
+        errorBuilder: (context, error, stackTrace) => SizedBox(), imageFile);
   }
 }

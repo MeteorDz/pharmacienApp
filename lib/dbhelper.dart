@@ -1,18 +1,18 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbHelper {
-    late Database db;
-    Future<void> initdb() async {
+  late Database db;
+  Future<void> initdb() async {
     var databasesPath = await getDatabasesPath();
     String path = "$databasesPath/db.db";
 
 // Check if the database exists
     var exists = await databaseExists(path);
 
-    if (!exists) { 
-
+    if (!exists) {
       // Copy from asset
       ByteData data = await rootBundle.load(("assets/db.db"));
       List<int> bytes =
@@ -45,16 +45,38 @@ class DbHelper {
     print((await db.query('medication')).length);
   }
 
-    Future<Iterable<String>> getColumns() async {
+  Future<Iterable<String>> getColumns() async {
     return (await db.query('medication')).first.keys;
   }
 
-    query() async {
+  query() async {
     return (await db.query('medication'));
   }
 
-    filter(String column, String word) async {
+  filter(String column, String word) async {
+    log(name: 'db ', word);
+    List<String> patterns = [
+      '"',
+      ',',
+      '\'',
+      ';',
+      '(',
+      ')',
+      '*',
+      '/',
+      '%',
+      '+',
+      '-',
+      '=',
+      '<',
+      '>',
+    ];
+    for (var pattern in patterns) {
+      word = word.replaceAll(pattern, '\\$pattern');
+    }
+
+    log(name: 'db ', word);
     return (await db.query('medication', where: ''' 
-  $column LIKE '%$word%' COLLATE NOCASE'''));
+  $column LIKE '$word' COLLATE NOCASE'''));
   }
 }

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:sqlitedatabase/model.dart';
-import 'package:sqlitedatabase/remain.dart';
+import 'package:sqlitedatabase/scanner.dart';
 
 import 'dbhelper.dart';
 import 'medWidget.dart';
@@ -61,8 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
   filter(String column, String word) async {
     // await db.initdb();
     // <List<Map<String, Object?>>>
-    dataSet = (await widget.db.filter(column, word));
-    log(dataSet!.length.toString());
+    String col = 'NOMDEMARQUE';
+
+    dataSet = (await widget.db.filter(col, word));
+    if (dataSet == null || dataSet!.isEmpty) {
+      col = 'name';
+      dataSet = (await widget.db.filter(col, word));
+    }
+
     setState(() {
       dataSet = dataSet!
           .getRange(0, (dataSet!.length < 100 ? dataSet!.length : 100))
@@ -116,23 +122,33 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Map<String, Object?>>? dataSet,
   ) {
     if (dataSet != null) {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ...dataSet
-                .map((rows) => GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MedicationPage(
-                                    medicationModel:
-                                        MedicationModel.fromMap(rows),
-                                  )));
-                    },
-                    child: Text(rows.values.first.toString())))
-                .toList(),
-          ]);
+      return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        ...dataSet
+            .map((rows) => SizedBox(
+              width: double.infinity, 
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MedicationPage(
+                                      medicationModel:
+                                          MedicationModel.fromMap(rows),
+                                    )));
+                      },
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          Text(rows.values.toList()[5].toString()),
+                          Text(rows.values.toList()[0].toString()),
+                          Text(rows.values.toList()[7].toString()),
+                        ],
+                      )),
+                ))
+            .toList(),
+      ]);
     } else {
       return const SizedBox();
     }

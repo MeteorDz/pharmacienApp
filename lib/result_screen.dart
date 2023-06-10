@@ -1,15 +1,25 @@
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
-
 import 'dbhelper.dart';
 import 'medWidget.dart';
 import 'model.dart';
+import 'package:flutter/material.dart';
+import 'dart:developer';
 
-class ResultScreen extends StatelessWidget {
-  final String text;
+class ResultScreen extends StatefulWidget {
+  const ResultScreen(
+      {super.key, required this.text, required this.picture, required this.db});
+
+  final String text, picture;
   final DbHelper db;
-  const ResultScreen({super.key, required this.text, required this.db});
+  @override
+  State<ResultScreen> createState() => _ResultScreentState();
+}
+
+class _ResultScreentState extends State<ResultScreen> {
+  @override
+  void initState() {
+    super.initState();
+    search(context, widget.text);
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -18,41 +28,41 @@ class ResultScreen extends StatelessWidget {
         ),
         body: Container(
           padding: const EdgeInsets.all(30.0),
-          child: GestureDetector(
-              onTap: () {
-                search(context, text);
-              },
-              child: Text(text)),
+          child: GestureDetector(onTap: () {}, child: Text(widget.text)),
         ),
       );
 
-  Future<String> search(BuildContext context, String text) async { 
+  Future<String> search(BuildContext context, String text) async {
     String col = 'NOMDEMARQUE';
     MedicationModel? med;
 
     for (var word in text.split('\n')) {
+      log(name: 'text$col', word);
       List<Map<String, Object?>>? mapedMedicationModel =
-          (await db.filter(col, word));
+          (await widget.db.filter(col, word));
       if (mapedMedicationModel != null && mapedMedicationModel.isNotEmpty) {
         med = MedicationModel.fromMap(mapedMedicationModel.first);
+
+        break;
       }
-      break;
     }
 
     if (med == null) {
       col = 'name';
       for (var word in text.split('\n')) {
+        log(name: 'text$col', word);
         List<Map<String, Object?>>? mapedMedicationModel =
-            (await db.filter(col, word));
+            (await widget.db.filter(col, word));
         if (mapedMedicationModel != null && mapedMedicationModel.isNotEmpty) {
           med = MedicationModel.fromMap(mapedMedicationModel.first);
+          break;
         }
-        break;
       }
     }
     if (med == null) {
       log('no data');
     } else {
+      med = med.copyWith(picture: widget.picture);
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -60,7 +70,7 @@ class ResultScreen extends StatelessWidget {
                     medicationModel: med!,
                   )));
     }
-    log(med.toString()); 
+    log(med.toString());
 
     return med.toString();
   }

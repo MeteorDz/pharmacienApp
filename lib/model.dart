@@ -3,6 +3,7 @@ import 'dart:convert';
 
 class MedicationModel {
   String name;
+  String picture;
   String description;
   String indication;
   String mechanism_of_action;
@@ -16,6 +17,7 @@ class MedicationModel {
   int id;
   MedicationModel({
     required this.name,
+    required this.picture,
     required this.description,
     required this.indication,
     required this.mechanism_of_action,
@@ -31,6 +33,7 @@ class MedicationModel {
 
   MedicationModel copyWith({
     String? name,
+    String? picture,
     String? description,
     String? indication,
     String? mechanism_of_action,
@@ -45,6 +48,7 @@ class MedicationModel {
   }) {
     return MedicationModel(
       name: name ?? this.name,
+      picture: picture ?? this.picture,
       description: description ?? this.description,
       indication: indication ?? this.indication,
       mechanism_of_action: mechanism_of_action ?? this.mechanism_of_action,
@@ -66,6 +70,7 @@ class MedicationModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'name': name,
+      'picture': picture,
       'description': description,
       'indication': indication,
       'mechanism_of_action': mechanism_of_action,
@@ -84,20 +89,21 @@ class MedicationModel {
 
   factory MedicationModel.fromMap(Map<String, dynamic> map) {
     return MedicationModel(
-      name: map['name'] ?.toString() ?? '//',
-      description: map['description'] ?.toString() ?? '//',
-      indication: map['indication']?.toString() ?? '//',
-      mechanism_of_action: map['mechanism_of_action'] as String,
-      toxicity: map['toxicity']?.toString() ?? '//',
-      NOMDEMARQUE: map['NOMDEMARQUE'] ?.toString() ?? '//',
-      FORME: map['FORME'] ?.toString() ?? '//',
-      DOSAGE: map['DOSAGE'] ?.toString() ?? '//',
-      COND: map['COND'] ?.toString() ?? '//',
+      name: map['name'] .toString(),
+      picture: map['picture'].toString(),
+      description: map['description'] .toString(),
+      indication: map['indication'] .toString(),
+      mechanism_of_action: map['mechanism_of_action'] .toString(),
+      toxicity: map['toxicity'] .toString(),
+      NOMDEMARQUE: map['NOMDEMARQUE'] .toString(),
+      FORME: map['FORME'] .toString(),
+      DOSAGE: map['DOSAGE'] .toString(),
+      COND: map['COND'] .toString(),
       LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT:
-          map['LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT'] ?.toString() ?? '//',
+          map['LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT'] .toString(),
       PAYSDULABORATOIREDETENTEURDELADECISIONDENREGISTREMENT:
           map['PAYSDULABORATOIREDETENTEURDELADECISIONDENREGISTREMENT']
-              ?.toString() ?? '//',
+              .toString(),
       id: map['id'] as int,
     );
   }
@@ -109,7 +115,7 @@ class MedicationModel {
 
   @override
   String toString() {
-    return 'MedicationModel(name: $name, description: $description, indication: $indication, mechanism_of_action: $mechanism_of_action, toxicity: $toxicity, NOMDEMARQUE: $NOMDEMARQUE, FORME: $FORME, DOSAGE: $DOSAGE, COND: $COND, LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT: $LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT, PAYSDULABORATOIREDETENTEURDELADECISIONDENREGISTREMENT: $PAYSDULABORATOIREDETENTEURDELADECISIONDENREGISTREMENT, id: $id)';
+    return 'MedicationModel(name: $name, picture: $picture, description: $description, indication: $indication, mechanism_of_action: $mechanism_of_action, toxicity: $toxicity, NOMDEMARQUE: $NOMDEMARQUE, FORME: $FORME, DOSAGE: $DOSAGE, COND: $COND, LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT: $LABORATOIRESDETENTEURDELADECISIONDENREGISTREMENT, PAYSDULABORATOIREDETENTEURDELADECISIONDENREGISTREMENT: $PAYSDULABORATOIREDETENTEURDELADECISIONDENREGISTREMENT, id: $id)';
   }
 
   @override
@@ -117,6 +123,7 @@ class MedicationModel {
     if (identical(this, other)) return true;
 
     return other.name == name &&
+        other.picture == picture &&
         other.description == description &&
         other.indication == indication &&
         other.mechanism_of_action == mechanism_of_action &&
@@ -135,6 +142,7 @@ class MedicationModel {
   @override
   int get hashCode {
     return name.hashCode ^
+        picture.hashCode ^
         description.hashCode ^
         indication.hashCode ^
         mechanism_of_action.hashCode ^

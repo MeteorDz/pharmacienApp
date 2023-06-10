@@ -18,14 +18,14 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home:   MainScreen(db: db),
+      home: MainScreen(db: db),
     );
   }
 }
 
-class MainScreen extends StatefulWidget { 
- const MainScreen({super.key, required this.db});
-final DbHelper db;
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key, required this.db});
+  final DbHelper db;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -75,54 +75,61 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
-        return Stack(
-          children: [
-            if (_isPermissionGranted)
-              FutureBuilder<List<CameraDescription>>(
-                future: availableCameras(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    _initCameraController(snapshot.data!);
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Scanner فرمسيان '),
+          ),
+          bottomNavigationBar: Container(height: 52, color: Colors.green),
+          backgroundColor: _isPermissionGranted ? Colors.transparent : null,
+          body: _isPermissionGranted
+              ? Stack(
+                  children: [
+                    if (_isPermissionGranted)
+                      FutureBuilder<List<CameraDescription>>(
+                        future: availableCameras(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            _initCameraController(snapshot.data!);
 
-                    return Center(child: CameraPreview(_cameraController!));
-                  } else {
-                    return const LinearProgressIndicator();
-                  }
-                },
-              ),
-            Scaffold(
-              appBar: AppBar(
-                title: const Text('Scanner فرمسيان '),
-              ),
-              backgroundColor: _isPermissionGranted ? Colors.transparent : null,
-              body: _isPermissionGranted
-                  ? Column(
-                      children: [
-                        Expanded(
-                          child: Container(),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 30.0),
-                          child: Center(
-                            child: ElevatedButton(
-                              onPressed:  () => _scanImage(widget.db),
-                              child: const Text('Scan Medication'),
+                            return CameraPreview(_cameraController!);
+                          } else {
+                            return const LinearProgressIndicator();
+                          }
+                        },
+                      ),
+                    Positioned(
+                      left: 10,
+                      right: 10,
+                      bottom: 100,
+                      child: GestureDetector(
+                        onTap: () => _scanImage(widget.db),
+                        child: Center(
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(180)),
+                            child: Icon(
+                              Icons.camera_outlined,
+                              color: Colors.white,
+                              size: 50,
                             ),
                           ),
                         ),
-                      ],
-                    )
-                  : Center(
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-                        child: const Text(
-                          'Camera permission denied',
-                          textAlign: TextAlign.center,
-                        ),
                       ),
                     ),
-            ),
-          ],
+                  ],
+                )
+              : Center(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                    child: const Text(
+                      'Camera permission denied',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
         );
       },
     );
@@ -182,6 +189,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _scanImage(DbHelper db) async {
+    
     if (_cameraController == null) return;
 
     final navigator = Navigator.of(context);
@@ -196,8 +204,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
       await navigator.push(
         MaterialPageRoute(
-          builder: (BuildContext context) =>
-              ResultScreen(db: db, text: recognizedText.text),
+          builder: (BuildContext context) => ResultScreen(
+              picture: pictureFile.path, db: db, text: recognizedText.text),
         ),
       );
     } catch (e) {
