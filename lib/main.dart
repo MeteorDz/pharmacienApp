@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:sqlitedatabase/model.dart';
 import 'package:sqlitedatabase/scanner.dart';
+import 'package:sqlitedatabase/splash.dart';
 
 import 'dbhelper.dart';
 import 'medWidget.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: MyHomePage(db: db, title: 'فرمسيــــان'),
+      home: SplashView(db: db),
     );
   }
 }
